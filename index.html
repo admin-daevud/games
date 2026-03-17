@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>games.daevud.com</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Teko:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080808;
+    --surface: #0f0f0f;
+    --border: #1e1e1e;
+    --accent: #e8c97a;
+    --accent2: #4a9eff;
+    --red: #e06060;
+    --text: #d0d0d0;
+    --muted: #444;
+    --scanline: rgba(255,255,255,0.015);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      var(--scanline) 2px,
+      var(--scanline) 4px
+    );
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(74,158,255,0.04) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  header {
+    padding: 52px 0 0;
+    text-align: center;
+  }
+
+  .logo-line {
+    font-family: 'Teko', sans-serif;
+    font-weight: 300;
+    font-size: 13px;
+    letter-spacing: 0.4em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    font-family: 'Teko', sans-serif;
+    font-weight: 400;
+    font-size: clamp(54px, 10vw, 88px);
+    line-height: 0.9;
+    color: #fff;
+    letter-spacing: -0.01em;
+    margin-bottom: 6px;
+  }
+
+  h1 span {
+    color: var(--accent);
+  }
+
+  .tagline {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.25em;
+    margin-top: 14px;
+    margin-bottom: 0;
+  }
+
+  .insert-coin {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 5px 14px;
+    margin-top: 28px;
+    animation: blink 1.4s step-end infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 48px 0 40px;
+  }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.35em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+  }
+
+  .game-card {
+    display: block;
+    text-decoration: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.15s;
+    position: relative;
+  }
+
+  .game-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .game-card:hover .card-preview {
+    opacity: 1;
+  }
+
+  .card-preview {
+    height: 150px;
+    background: #0a0a0a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    opacity: 0.85;
+    transition: opacity 0.2s;
+  }
+
+  .preview-canvas {
+    display: block;
+  }
+
+  .card-body {
+    padding: 14px 16px 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .card-title {
+    font-family: 'Teko', sans-serif;
+    font-weight: 400;
+    font-size: 26px;
+    color: #fff;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .card-desc {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+  }
+
+  .tag {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--accent2);
+    border: 1px solid rgba(74,158,255,0.3);
+    padding: 2px 8px;
+    border-radius: 2px;
+    text-transform: uppercase;
+  }
+
+  .play-btn {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  .coming-soon-card .card-preview {
+    opacity: 0.4;
+  }
+
+  .coming-soon-card .card-title,
+  .coming-soon-card .play-btn {
+    color: var(--muted);
+  }
+
+  .coming-soon-card .tag {
+    color: var(--muted);
+    border-color: var(--muted);
+  }
+
+  .coming-soon-card:hover {
+    border-color: var(--border);
+    transform: none;
+    cursor: default;
+  }
+
+  .cs-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    text-transform: uppercase;
+    background: var(--surface);
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  footer {
+    margin-top: 80px;
+    padding: 28px 0 36px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+  }
+
+  .hi-score {
+    color: var(--muted);
+  }
+
+  .hi-score span {
+    color: var(--accent);
+  }
+
+  @media (max-width: 520px) {
+    .games-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 10px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo-line">daevud.com / games</div>
+    <h1>GAME<span>S</span></h1>
+    <p class="tagline">a small arcade by david taylor</p>
+    <div class="insert-coin">▶ insert coin to continue</div>
+  </header>
+
+  <hr class="divider">
+
+  <div class="section-label">// available now</div>
+
+  <div class="games-grid">
+
+    <a href="./tapper/" class="game-card">
+      <div class="card-preview">
+        <canvas class="preview-canvas" id="tapper-preview" width="240" height="150"></canvas>
+      </div>
+      <div class="card-body">
+        <div class="card-title">TAPPER</div>
+        <div class="card-desc">Serve drinks before the customers reach the bar. Don't miss the empty mugs sliding back.</div>
+        <div class="card-meta">
+          <span class="tag">arcade</span>
+          <span class="play-btn">play →</span>
+        </div>
+      </div>
+    </a>
+
+    <div class="game-card coming-soon-card">
+      <div class="card-preview">
+        <canvas class="preview-canvas" id="snake-preview" width="240" height="150"></canvas>
+        <div class="cs-label">coming soon</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">SNAKE</div>
+        <div class="card-desc">Classic grid crawler. Eat, grow, don't bite yourself.</div>
+        <div class="card-meta">
+          <span class="tag">arcade</span>
+          <span class="play-btn">locked</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="game-card coming-soon-card">
+      <div class="card-preview">
+        <canvas class="preview-canvas" id="asteroids-preview" width="240" height="150"></canvas>
+        <div class="cs-label">coming soon</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">ASTEROIDS</div>
+        <div class="card-desc">Vector ship. Infinite rocks. You know the deal.</div>
+        <div class="card-meta">
+          <span class="tag">shooter</span>
+          <span class="play-btn">locked</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <div>games.daevud.com</div>
+    <div class="hi-score">HI-SCORE <span id="hi">000000</span></div>
+  </footer>
+</div>
+
+<script>
+// Tapper animated preview
+(function() {
+  const c = document.getElementById('tapper-preview');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const W = 240, H = 150, LANES = 4, LH = H / LANES;
+  let t = 0;
+  const customers = [
+    { lane: 0, x: 200 }, { lane: 2, x: 155 }, { lane: 3, x: 220 }
+  ];
+  const mugs = [];
+  let mug_t = 0;
+
+  function draw() {
+    ctx.fillStyle = '#080808';
+    ctx.fillRect(0, 0, W, H);
+    for (let i = 0; i < LANES; i++) {
+      ctx.fillStyle = i % 2 === 0 ? '#0f0f0f' : '#0a0a0a';
+      ctx.fillRect(0, i * LH, W, LH);
+      ctx.strokeStyle = '#1e1e1e';
+      ctx.setLineDash([3, 6]);
+      ctx.lineWidth = 0.5;
+      ctx.beginPath();
+      ctx.moveTo(44, i * LH + LH / 2);
+      ctx.lineTo(W - 10, i * LH + LH / 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    ctx.fillStyle = '#111';
+    ctx.fillRect(0, 0, 42, H);
+
+    // bartender
+    const bl = 1;
+    const by = bl * LH + LH / 2;
+    ctx.fillStyle = '#2266aa';
+    ctx.fillRect(14, by - 10, 20, 18);
+    ctx.fillStyle = '#4a9eff';
+    ctx.fillRect(16, by - 18, 16, 10);
+    ctx.fillStyle = '#f0d0a0';
+    ctx.beginPath();
+    ctx.arc(24, by - 18, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // mugs sliding
+    for (const m of mugs) {
+      ctx.fillStyle = '#e8c97a';
+      ctx.fillRect(m.x, m.lane * LH + LH / 2 - 5, 14, 10);
+      ctx.fillStyle = '#dab050';
+      ctx.fillRect(m.x + 14, m.lane * LH + LH / 2 - 3, 3, 6);
+    }
+
+    // customers
+    for (const cust of customers) {
+      const cy = cust.lane * LH + LH / 2;
+      ctx.fillStyle = '#a03030';
+      ctx.fillRect(cust.x + 2, cy - 6, 16, 14);
+      ctx.fillStyle = '#e06060';
+      ctx.fillRect(cust.x + 4, cy - 14, 12, 10);
+      ctx.fillStyle = '#f0d0a0';
+      ctx.beginPath();
+      ctx.arc(cust.x + 10, cy - 14, 5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    t++;
+    mug_t++;
+    for (const cust of customers) {
+      cust.x -= 0.4;
+      if (cust.x < 50) cust.x = W - 20;
+    }
+    for (const m of mugs) {
+      m.x += 3;
+      if (m.x > W) m.alive = false;
+    }
+    mugs.splice(0, mugs.length, ...mugs.filter(m => m.alive !== false));
+    if (mug_t % 80 === 0) {
+      mugs.push({ lane: Math.floor(Math.random() * 4), x: 44, alive: true });
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// Snake preview
+(function() {
+  const c = document.getElementById('snake-preview');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const W = 240, H = 150, SZ = 10;
+  let snake = [{x:12,y:7},{x:11,y:7},{x:10,y:7},{x:9,y:7}];
+  let dir = {x:1,y:0};
+  let food = {x:18,y:5};
+  let frame = 0;
+  function draw() {
+    ctx.fillStyle = '#080808';
+    ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = '#111';
+    ctx.lineWidth = 0.5;
+    for (let x = 0; x < W; x += SZ) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+    for (let y = 0; y < H; y += SZ) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+    if (frame % 8 === 0) {
+      const head = snake[0];
+      const nx = head.x + dir.x, ny = head.y + dir.y;
+      snake.unshift({x:nx,y:ny});
+      if (nx === food.x && ny === food.y) {
+        food = {x:Math.floor(Math.random()*(W/SZ-2))+1, y:Math.floor(Math.random()*(H/SZ-2))+1};
+      } else {
+        snake.pop();
+      }
+      if (nx <= 0 || nx >= W/SZ-1 || ny <= 0 || ny >= H/SZ-1) {
+        snake = [{x:12,y:7},{x:11,y:7},{x:10,y:7}];
+        dir = {x:1,y:0};
+      }
+      const head2 = snake[0];
+      const dy = food.y - head2.y, dx = food.x - head2.x;
+      if (Math.abs(dx) > Math.abs(dy)) dir = {x: dx>0?1:-1, y:0};
+      else dir = {x:0, y: dy>0?1:-1};
+    }
+    ctx.fillStyle = '#1d9e75';
+    for (const s of snake) ctx.fillRect(s.x*SZ+1,s.y*SZ+1,SZ-2,SZ-2);
+    ctx.fillStyle = '#e06060';
+    ctx.fillRect(food.x*SZ+2,food.y*SZ+2,SZ-4,SZ-4);
+    frame++;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// Asteroids preview
+(function() {
+  const c = document.getElementById('asteroids-preview');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const W = 240, H = 150;
+  const ship = {x:120,y:75,a:0};
+  const rocks = Array.from({length:5},(_,i)=>({
+    x:30+i*40, y:20+i*22, r:14+i%3*6,
+    vx:(Math.random()-0.5)*0.6, vy:(Math.random()-0.5)*0.6,
+    rot:0, rotV:(Math.random()-0.5)*0.02,
+    pts: Array.from({length:8},(_,j)=>({a:j/8*Math.PI*2, r:0.7+Math.random()*0.4}))
+  }));
+  const bullets = [];
+  let frame = 0;
+  function draw() {
+    ctx.fillStyle = 'rgba(8,8,8,0.85)';
+    ctx.fillRect(0,0,W,H);
+    ship.a += 0.012;
+    ctx.save();
+    ctx.translate(ship.x, ship.y);
+    ctx.rotate(ship.a);
+    ctx.strokeStyle = '#4a9eff';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(0,-10); ctx.lineTo(7,7); ctx.lineTo(0,3); ctx.lineTo(-7,7); ctx.closePath();
+    ctx.stroke();
+    ctx.restore();
+    if (frame % 40 === 0) {
+      bullets.push({x:ship.x+Math.sin(ship.a)*10, y:ship.y-Math.cos(ship.a)*10, vx:Math.sin(ship.a)*4, vy:-Math.cos(ship.a)*4, life:30});
+    }
+    for (const b of bullets) {
+      b.x+=b.vx; b.y+=b.vy; b.life--;
+      ctx.fillStyle='rgba(74,158,255,0.9)';
+      ctx.beginPath(); ctx.arc(b.x,b.y,2,0,Math.PI*2); ctx.fill();
+    }
+    bullets.splice(0,bullets.length,...bullets.filter(b=>b.life>0));
+    for (const rock of rocks) {
+      rock.x += rock.vx; rock.y += rock.vy; rock.rot += rock.rotV;
+      if (rock.x < -rock.r) rock.x = W+rock.r;
+      if (rock.x > W+rock.r) rock.x = -rock.r;
+      if (rock.y < -rock.r) rock.y = H+rock.r;
+      if (rock.y > H+rock.r) rock.y = -rock.r;
+      ctx.save();
+      ctx.translate(rock.x,rock.y);
+      ctx.rotate(rock.rot);
+      ctx.strokeStyle='#444';
+      ctx.lineWidth=1.2;
+      ctx.beginPath();
+      rock.pts.forEach((p,i)=>{
+        const px=Math.cos(p.a)*rock.r*p.r, py=Math.sin(p.a)*rock.r*p.r;
+        i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);
+      });
+      ctx.closePath(); ctx.stroke();
+      ctx.restore();
+    }
+    frame++;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// hi score from localStorage
+try {
+  const hi = localStorage.getItem('daevud_tapper_hi') || 0;
+  document.getElementById('hi').textContent = String(hi).padStart(6,'0');
+} catch(e) {}
+</script>
+</body>
+</html>
